@@ -65,7 +65,7 @@ classdef Blowfish
             end
             for i = 1:4
                 for j = 1:256
-                    Blowfish_encipher(obj,datal,datar);
+                    Blowfish_encipher(datal,datar);
                     [obj.sbox(i,j)] = datal;
                     [obj.sbox(i,j+1)] = datar;
                 end
@@ -77,7 +77,7 @@ classdef Blowfish
             n = obj.N;
             for i = n+2:-1:1
                 xl = bitxor(xl,obj.P(i));
-                xr = bitxor(F(obj,xl),xr);
+                xr = bitxor(F(xl),xr);
                 
                 temp = xl;
                 xl = xr;
