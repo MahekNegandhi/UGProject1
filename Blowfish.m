@@ -3,7 +3,7 @@ classdef Blowfish
     properties
         sbox
         abox1
-        abox2
+        abox2 
         abox3
         abox4
         P1
@@ -59,13 +59,13 @@ classdef Blowfish
             datal = hex2dec('00000000');
             datar = hex2dec('00000000');
             for i = 1:2:n+2
-                Blowfish_encipher(obj,datal,datar);
+                [datal,datar] = Blowfish_encipher(obj,datal,datar);
                 [obj.P(i)] = datal;
                 [obj.P(i+1)] = datar;
             end
             for i = 1:4
                 for j = 1:256
-                    Blowfish_encipher(obj,datal,datar);
+                    [datal,datar] = Blowfish_encipher(obj,datal,datar);
                     [obj.sbox(i,j)] = datal;
                     [obj.sbox(i,j+1)] = datar;
                 end
@@ -75,7 +75,7 @@ classdef Blowfish
 
         function [xl,xr] = Blowfish_decipher(obj,xl,xr)
             n = obj.N;
-            for i = n+2:-1:1
+            for i = n+2:-1:3
                 xl = bitxor(xl,obj.P(i));
                 xr = bitxor(F(obj,xl),xr);
                 
@@ -93,14 +93,12 @@ classdef Blowfish
         end
         
         function y = F(obj,x)
+            a = bitand(bitshift(x,-24),hex2dec('00FF'));
+            b = bitand(bitshift(x,-16),hex2dec('00FF'));
+            c = bitand(bitshift(x,-8),hex2dec('00FF'));
             d = bitand(x,hex2dec('00FF'));
-            x=bitshift(x,-8);
-            c = bitand(x,hex2dec('00FF'));
-            x=bitshift(x,-8);
-            b = bitand(x,hex2dec('00FF'));
-            x=bitshift(x,-8);
-            a = bitand(x,hex2dec('00FF'));
             y = bitxor((obj.sbox(1,a+1)+obj.sbox(2,b+1)),obj.sbox(2,c+1))+obj.sbox(3,d+1);
+            y = mod(y,4294967296); 
         end
     end
     
